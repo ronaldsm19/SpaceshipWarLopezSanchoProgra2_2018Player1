@@ -4,6 +4,7 @@
  */
 package SocketServerAndClient;
 
+import Domain.Client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,14 +23,15 @@ public class MyServer extends Thread {
     //atributos
     //private int socketPortNumber;
     private Socket socket;
-    private ArrayList array = new ArrayList<>();
-    private int n;
+    private ArrayList array = new ArrayList<Client>();
+    private String n;
 
     //constructor
-    public MyServer(Socket socket, int n) {
+    public MyServer(Socket socket, Client client) {
         super("Server Thread");
         this.socket = socket;
-        this.n = n;
+        this.n = client.getIp();
+
     }
 
     @Override
@@ -42,7 +44,15 @@ public class MyServer extends Thread {
                                 socket.getInputStream()));
 
                 send1.println(this.n + " es su numero");//envia n indicandole cual cliente es
-                System.out.println(receive1.readLine());//imprime lo que envia el cliente en este caso el nombre
+                switch (receive1.readLine().toUpperCase()) {
+                    case "CREATE":
+                        
+                        System.out.println("case create");
+                        break;
+                    case "ATTACK":
+                        System.out.println("case attack");
+                        break;
+                }
             } while (true);
         } catch (IOException ex) {
             Logger.getLogger(MyServer.class.getName()).log(Level.SEVERE, null, ex);

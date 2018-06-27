@@ -4,6 +4,7 @@
  */
 package SocketServerAndClient;
 
+import Domain.Client;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -23,8 +24,10 @@ public class MainServer {
         int c = 0;
         mainServer = new ServerSocket(12000);
         do {
+            Socket s = mainServer.accept();
             c++;
-            new MyServer(mainServer.accept(), c).start();//c es la cantidad de clientes conectados
+            new MyServer(s, new Client("", String.valueOf(0), String.valueOf(s.getInetAddress().toString().substring(1)))).start();//c es la cantidad de clientes conectados
+           
         } while (true);
     }
 }
