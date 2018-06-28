@@ -10,6 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 //author @Kenneth Lopez Porras
 
 public class MyClient extends Thread {
@@ -27,7 +29,7 @@ public class MyClient extends Thread {
     public void run() {
         InetAddress address;
         Socket socket;
-        
+
         try {
             address = InetAddress.getLocalHost();
             socket = new Socket(address, this.socketPortNumber);
@@ -39,15 +41,24 @@ public class MyClient extends Thread {
             );
             System.out.println(receive.readLine());//lee el mensaje del server
             String nombre = JOptionPane.showInputDialog(null, " Digite su nombre");//pregunta por el nombre
-            String corde = JOptionPane.showInputDialog(null,"Digite sus cordenadas");
-            send.println(nombre);//envia crear con el nombre
-            Element eCreate = action.create(nombre, corde);
-            
-            
+            String msj = JOptionPane.showInputDialog(null, "Mensaje");
+//            send.println(nombre);//envia crear con el nombre
+            Element eCreate = new Element(nombre);
+            eCreate.setAttribute("Message", msj);
+
+            XMLOutputter xMLOutputter = new XMLOutputter(Format.getCompactFormat());
+            String xmlStringStudentElement = xMLOutputter.outputString(eCreate);
+            xmlStringStudentElement = xmlStringStudentElement.replace("\n", "");
+
+//            XMLOutputter xmOut = new XMLOutputter();
+////            new XMLOutputter().outputString(eCreate);
+//            String info = "Name :" + xmOut.outputString(eCreate);
+            System.out.println(xmlStringStudentElement);
+            send.println(xmlStringStudentElement);
+
         } catch (Exception ex) {
             Logger.getLogger(MyClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
 
 }

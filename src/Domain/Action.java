@@ -13,28 +13,21 @@ import org.jdom.Element;
  */
 public class Action {
 
-    
     private Element eName;
     private Element eCordeElement;
+
     public Action() {
-        this.eCordeElement = null;
+
     }
 
     public Element create(String name, String cordenadas) {
         //crear elemento con esos atributos y lo retorna
-        Element eMessage = new Element("Create");
-        
-        eName = new Element("name");
-        eName.addContent(name);
-        
-        eCordeElement = new Element("cordenadas");
-        eCordeElement.addContent(cordenadas);
-
-        eMessage.addContent(eName);
-        eMessage.addContent(eCordeElement);
-        
-        
-        return this.eCordeElement;
+        Element eMessage = new Element("Element");
+        eMessage.setAttribute("name", name);
+        Element eC = new Element("name");
+        eName.addContent(cordenadas);
+        eMessage.addContent(eC);
+        return eMessage;
     }
 
 }
