@@ -11,7 +11,7 @@ import java.net.Socket;
 
 /**
  *
- * @author fabian
+ * @author kenneth
  */
 public class MainServer {
 
