@@ -27,7 +27,7 @@ public class MainServer {
             Socket s = mainServer.accept();
             c++;
             new MyServer(s, new Client("", String.valueOf(0), String.valueOf(s.getInetAddress().toString().substring(1)))).start();//c es la cantidad de clientes conectados
-           
+            
         } while (true);
     }
 }
