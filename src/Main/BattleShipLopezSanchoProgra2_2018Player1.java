@@ -12,15 +12,15 @@ public class BattleShipLopezSanchoProgra2_2018Player1 extends Application {
 
     public static void main(String[] args) throws IOException {
         MyClient myClient = new MyClient(12000);
-        myClient.start();
+//        myClient.start();
         launch(args);
-        
+
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Scene scene = new Scene(new GameWindow().init(), 1300, 700);
-
+        GameWindow g = new GameWindow();
+        Scene scene = new Scene(g.init(12000), 1300, 700);
         primaryStage.setTitle("JUEGO");
         primaryStage.setScene(scene);
         primaryStage.show();
