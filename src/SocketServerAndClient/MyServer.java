@@ -1,16 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SocketServerAndClient;
 
-import Domain.Client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.StringReader;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -20,21 +14,14 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-/**
- *
- * @author fabian
- */
 public class MyServer extends Thread {
 
-    //atributos
-    //private int socketPortNumber;
     private Socket socket1, socket2;
     private ArrayList<String> array = new ArrayList<String>();
     private String n;
     PrintStream sendP1, sendP2;
     BufferedReader receiveP1, receiveP2;
 
-    //constructor
     public MyServer(Socket socket1, Socket socket2) throws IOException {
         super("Server Thread");
         this.socket1 = socket1;
@@ -50,45 +37,38 @@ public class MyServer extends Thread {
         try {
             while (true) {
                 String info1 = null;
-                System.out.println("Esperando 1");
-                if ((info1 = receiveP1.readLine()) != null) {
-                    System.out.println("entro 1");
-                    SAXBuilder saxBuilder = new SAXBuilder();
-                    StringReader stringReader = new StringReader(info1);
-                    Document doc = saxBuilder.build(stringReader);
-                    Element root = doc.getRootElement();
-                    String action = root.getName();
-                    switch (action.toUpperCase()) {
-                        case "CREATE":
-                            break;
-                        case "ATTACK":
-                            break;
-                        case "MESSAGE":
-                            sendP2.println(info1);
-                            break;
-                    }
+                info1 = receiveP1.readLine();
+                SAXBuilder saxBuilder = new SAXBuilder();
+                StringReader stringReader = new StringReader(info1);
+                Document doc = saxBuilder.build(stringReader);
+                Element root = doc.getRootElement();
+                String action = root.getName();
+                switch (action.toUpperCase()) {
+                    case "CREATE":
+                        break;
+                    case "ATTACK":
+                        break;
+                    case "MESSAGE":
+                        sendP2.println(info1);
+                        break;
                 }
-                String info2 = null;
-                System.out.println("salio 1 y espero 2");
-                if ((info2 = receiveP2.readLine()) != null) {
-                    System.out.println("entro 2");
-                    SAXBuilder saxBuilder = new SAXBuilder();
-                    StringReader stringReader = new StringReader(info2);
-                    Document doc = saxBuilder.build(stringReader);
-                    Element root = doc.getRootElement();
-                    String action = root.getName();
-                    switch (action.toUpperCase()) {
-                        case "CREATE":
-                            break;
-                        case "ATTACK":
-                            break;
-                        case "MESSAGE":
-                            sendP1.println(info2);
-                            break;
-                    }
 
+                String info2 = null;
+                info2 = receiveP2.readLine();
+                SAXBuilder saxBuilder2 = new SAXBuilder();
+                StringReader stringReader2 = new StringReader(info2);
+                Document doc2 = saxBuilder.build(stringReader2);
+                Element root2 = doc2.getRootElement();
+                String action2 = root2.getName();
+                switch (action2.toUpperCase()) {
+                    case "CREATE":
+                        break;
+                    case "ATTACK":
+                        break;
+                    case "MESSAGE":
+                        sendP1.println(info2);
+                        break;
                 }
-                System.out.println("salio 2");
             }
         } catch (IOException ex) {
             Logger.getLogger(MyServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -97,14 +77,3 @@ public class MyServer extends Thread {
         }
     }
 }
-
-/*
-SAXBuilder saxBuilder = new SAXBuilder();
-                            StringReader stringReader = new StringReader(infoResponse);
-                            Document doc = saxBuilder.build(stringReader);
-                            Element root = doc.getRootElement();
-                            //se crea un estudiante
-                            Student student = new Student();
-                            //se le asignan todos los atirbutos
-                            student.setIdentification(root.getAttributeValue("ID"));
-                            student.setAdmissionGrade(Float.parseFloat(root.getChildText("Grade")));*/

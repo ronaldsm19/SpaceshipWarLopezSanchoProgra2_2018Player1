@@ -16,18 +16,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javax.swing.JOptionPane;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-/**
- *
- * @author Ronald Emilio
- */
 public class GameWindow extends Thread implements GUI {
 
     private Pane root;
@@ -113,9 +107,9 @@ public class GameWindow extends Thread implements GUI {
             String message = "";
             String chat = "";
             message = this.tfxMessage.getText();
-            this.taChat.setText("Me"+ this.taChat.getText() + message + "\n");
+            this.taChat.setText(this.taChat.getText() + "Me: " + message + "\n");
             Element eCreate = new Element("Message");
-            eCreate.setAttribute("M", message);
+            eCreate.setAttribute("M", this.tfxName.getText() + ": " + message);
             XMLOutputter xMLOutputter = new XMLOutputter(Format.getCompactFormat());
             String xmlStringStudentElement = xMLOutputter.outputString(eCreate);
             xmlStringStudentElement = xmlStringStudentElement.replace("\n", "");
