@@ -2,10 +2,13 @@ package GUI;
 
 import SocketServerAndClient.MyClient;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.StringReader;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.Button;
@@ -14,7 +17,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javax.swing.JOptionPane;
+import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
@@ -30,10 +36,15 @@ public class GameWindow extends Thread implements GUI {
     private TextField tfxName, tfxMessage;
     private TextArea taChat;
     private int socketPortNumber;
+    private PrintStream send;
+    private BufferedReader receive;
+    private int clientNumber;
+    private InetAddress address;
+    private Socket socket;
 
+    @Override
     public Pane init(int socketPort) {
         this.socketPortNumber = socketPort;
-
         initializeComponents();
         locateComponents();
         addEventActions();
@@ -42,6 +53,7 @@ public class GameWindow extends Thread implements GUI {
         return root;
     }
 
+    @Override
     public void initializeComponents() {
         root = new Pane();
         lblName = new Label("Insert the name of player");
@@ -52,9 +64,34 @@ public class GameWindow extends Thread implements GUI {
         btnName = new Button("Play game");
         btnCheck = new Button("OK");
         taChat = new TextArea();
-
+        try {
+            address = InetAddress.getByName("192.168.1.9");
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            socket = new Socket(address, this.socketPortNumber);
+        } catch (IOException ex) {
+            Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            this.send = new PrintStream(socket.getOutputStream());
+        } catch (IOException ex) {
+            Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            this.receive = new BufferedReader(
+                    new InputStreamReader(
+                            socket.getInputStream()
+                    )
+            );
+        } catch (IOException ex) {
+            Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.clientNumber = 2;
     }
 
+    @Override
     public void locateComponents() {
         lblName.relocate(40, 50);
         lblChat.relocate(40, 200);
@@ -70,12 +107,19 @@ public class GameWindow extends Thread implements GUI {
         lblNamePlayer.relocate(650, 20);
     }
 
+    @Override
     public void addEventActions() {
         btnCheck.setOnAction((event) -> {
             String message = "";
             String chat = "";
-            message = "Me: " + this.tfxMessage.getText();
-            this.taChat.setText(this.taChat.getText() + message + "\n");
+            message = this.tfxMessage.getText();
+            this.taChat.setText("Me"+ this.taChat.getText() + message + "\n");
+            Element eCreate = new Element("Message");
+            eCreate.setAttribute("M", message);
+            XMLOutputter xMLOutputter = new XMLOutputter(Format.getCompactFormat());
+            String xmlStringStudentElement = xMLOutputter.outputString(eCreate);
+            xmlStringStudentElement = xmlStringStudentElement.replace("\n", "");
+            send.println(xmlStringStudentElement);
 
             this.tfxMessage.setText("");
 
@@ -95,34 +139,22 @@ public class GameWindow extends Thread implements GUI {
 
     @Override
     public void run() {
-        InetAddress address;
-        Socket socket;
         try {
-            address = InetAddress.getLocalHost();
-            socket = new Socket(address, this.socketPortNumber);
-            PrintStream send = new PrintStream(socket.getOutputStream());
-            BufferedReader receive = new BufferedReader(
-                    new InputStreamReader(
-                            socket.getInputStream()
-                    )
-            );
-            System.out.println(receive.readLine());//lee el mensaje del server
-            String nombre = JOptionPane.showInputDialog(null, " Digite su nombre");//pregunta por el nombre
-            String msj = JOptionPane.showInputDialog(null, "Mensaje");
-//            send.println(nombre);//envia crear con el nombre
-            Element eCreate = new Element(nombre);
-            eCreate.setAttribute("Message", msj);
-
-            XMLOutputter xMLOutputter = new XMLOutputter(Format.getCompactFormat());
-            String xmlStringStudentElement = xMLOutputter.outputString(eCreate);
-            xmlStringStudentElement = xmlStringStudentElement.replace("\n", "");
-
-//            XMLOutputter xmOut = new XMLOutputter();
-////            new XMLOutputter().outputString(eCreate);
-//            String info = "Name :" + xmOut.outputString(eCreate);
-            System.out.println(xmlStringStudentElement);
-            send.println(xmlStringStudentElement);
-
+            while (true) {
+                SAXBuilder saxBuilder = new SAXBuilder();
+                StringReader stringReader = new StringReader(this.receive.readLine());
+                Document doc = saxBuilder.build(stringReader);
+                Element root = doc.getRootElement();
+                String action = root.getName();
+                switch (action.toUpperCase()) {
+                    case "MESSAGE":
+                        this.taChat.setText(this.taChat.getText() + root.getAttributeValue("M") + "\n");
+                        System.out.println(root.getAttributeValue("M"));
+                        break;
+                    case "CHECK":
+                        break;
+                }
+            }
         } catch (Exception ex) {
             Logger.getLogger(MyClient.class.getName()).log(Level.SEVERE, null, ex);
         }

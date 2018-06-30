@@ -11,10 +11,9 @@ import javafx.stage.Stage;
 public class BattleShipLopezSanchoProgra2_2018Player1 extends Application {
 
     public static void main(String[] args) throws IOException {
-        MyClient myClient = new MyClient(12000);
+        // MyClient myClient = new MyClient(12000);
 //        myClient.start();
         launch(args);
-
     }
 
     @Override
