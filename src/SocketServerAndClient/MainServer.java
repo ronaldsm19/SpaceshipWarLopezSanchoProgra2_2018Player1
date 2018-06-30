@@ -8,6 +8,7 @@ import Domain.Client;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  *
@@ -17,17 +18,16 @@ public class MainServer {
 
     private static ServerSocket mainServer;
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) throws IOException {
         int c = 0;
         mainServer = new ServerSocket(12000);
         do {
-            Socket s = mainServer.accept();
-            c++;
-            new MyServer(s, new Client("", String.valueOf(0), String.valueOf(s.getInetAddress().toString().substring(1)))).start();//c es la cantidad de clientes conectados
-            
+            Socket player1 = mainServer.accept();
+            System.out.println("jugador 1");
+            Socket player2 = mainServer.accept();
+            System.out.println("jugador 2");
+            new MyServer(player1, player2).start();
+            System.out.println("Empieza juego");
         } while (true);
     }
 }
