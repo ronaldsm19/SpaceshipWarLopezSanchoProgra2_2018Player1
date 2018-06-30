@@ -8,6 +8,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Application;
+import javafx.stage.Stage;
 import javax.swing.JOptionPane;
 import org.jdom.Element;
 import org.jdom.output.Format;
@@ -18,6 +20,7 @@ public class MyClient extends Thread {
 
     //atributos
     private int socketPortNumber;
+    private Stage stage;
     Action action;
 
     public MyClient(int socketPortNumber) {
@@ -29,7 +32,6 @@ public class MyClient extends Thread {
     public void run() {
         InetAddress address;
         Socket socket;
-
         try {
             address = InetAddress.getLocalHost();
             socket = new Socket(address, this.socketPortNumber);
@@ -59,6 +61,13 @@ public class MyClient extends Thread {
         } catch (Exception ex) {
             Logger.getLogger(MyClient.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    /**
+     * @param stage the stage to set
+     */
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 
 }

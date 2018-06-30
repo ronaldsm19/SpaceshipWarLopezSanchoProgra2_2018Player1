@@ -12,11 +12,12 @@ import javafx.scene.layout.Pane;
  * @author Ronald Emilio
  */
 public interface GUI {
-    public Pane init();
+    public Pane init(int s);
     
     public void initializeComponents();
 
     public void locateComponents();
 
     public void addEventActions();
+    
 }
