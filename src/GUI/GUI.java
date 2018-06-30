@@ -5,10 +5,18 @@
  */
 package GUI;
 
+import javafx.scene.layout.Pane;
+
 /**
  *
  * @author Ronald Emilio
  */
-public class MainWindow {
-    //HOLA KENNETH
+public interface GUI {
+    public Pane init();
+    
+    public void initializeComponents();
+
+    public void locateComponents();
+
+    public void addEventActions();
 }
