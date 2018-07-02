@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -23,6 +24,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
+import javafx.stage.WindowEvent;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -36,7 +38,7 @@ public class GameWindow extends Thread implements GUI {
     private Button btnName, btnCheck, btnAttack;
     private TextField tfxName, tfxMessage;
     private TextArea taChat;
-    private int socketPortNumber, countM, countD, gridSize, xM, yM, lifeCount;//countM contador para la nave madre, countD para las hijas
+    private int socketPortNumber, countM, countD, gridSize, xM, yM, lifeCount, pixelX, pixelY;//countM contador para la nave madre, countD para las hijas
     private PrintStream send;
     private BufferedReader receive;
     private InetAddress address;
@@ -102,7 +104,7 @@ public class GameWindow extends Thread implements GUI {
         this.lblName.setFont(new Font("Arial", 15));
         this.lblGridSize.setFont(new Font("Arial", 15));
         try {
-            address = InetAddress.getByName("192.168.1.9");
+            address = InetAddress.getByName("192.168.43.93");
         } catch (UnknownHostException ex) {
             Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -219,14 +221,14 @@ public class GameWindow extends Thread implements GUI {
                     //  if (eventG.getButton() == MouseButton.PRIMARY) {
                     int ejeX = (int) Math.floor(eventG.getX() - 25);
                     int ejeY = (int) Math.floor(eventG.getY() - 28);
-                    int x1 = 145;
-                    int x2 = 125;
+                    this.pixelX = 145;
+                    this.pixelY = 125;
                     if (this.gridSize == 3) {
-                        x1 = 240;
-                        x2 = 207;
+                        this.pixelX = 240;
+                        this.pixelY = 207;
                     }
-                    int x = (int) Math.floor(eventG.getX() / x1);
-                    int y = (int) Math.floor(eventG.getY() / x2);
+                    int x = (int) Math.floor(eventG.getX() / this.pixelX);
+                    int y = (int) Math.floor(eventG.getY() / this.pixelY);
                     System.out.println("x: " + x + "  y: " + y);
                     if (this.countM == 0) {
                         this.draw(gc, ejeX, ejeY, new Image("file:/C:/Users/gmg/Desktop/Sprites/madre.png"));
@@ -246,11 +248,10 @@ public class GameWindow extends Thread implements GUI {
                 });
                 this.gridPaneToAttack.setOnMouseClicked((eventM) -> {
                     if (eventM.getButton() == MouseButton.PRIMARY) {
-                        int ejeX = (int) Math.floor(eventM.getX());// / 40);
-                        int ejeY = (int) Math.floor(eventM.getY());// / 40);
+                        int ejeX = (int) Math.floor(eventM.getX() / 40);
+                        int ejeY = (int) Math.floor(eventM.getY() / 40);
                         this.lblXtoAttack.setText(String.valueOf(ejeX));
                         this.lblYtoAttack.setText(String.valueOf(ejeY));
-                        System.out.println(ejeX + "-" + ejeY);
                     }
                 });
             } else {
@@ -259,18 +260,17 @@ public class GameWindow extends Thread implements GUI {
         }));
         this.btnAttack.setOnAction((event -> {
             this.lblStatus.setText("waiting...");
-            int xS = Integer.parseInt(this.lblXtoAttack.getText());
-            int yS = Integer.parseInt(this.lblYtoAttack.getText());
-            if (xS != 0 && yS != 0) {
-                Element eCreate = new Element("Attack");
-                eCreate.setAttribute("X", String.valueOf(xS));
-                eCreate.setAttribute("Y", String.valueOf(yS));
-                XMLOutputter xMLOutputter = new XMLOutputter(Format.getCompactFormat());
-                String xmlStringStudentElement = xMLOutputter.outputString(eCreate);
-                xmlStringStudentElement = xmlStringStudentElement.replace("\n", "");
-                send.println(xmlStringStudentElement);
-            } else {
-            }
+            int xS = Integer.parseInt(this.lblXtoAttack.getText()) * this.pixelX;
+            int yS = Integer.parseInt(this.lblYtoAttack.getText()) * this.pixelY;
+
+            Element eCreate = new Element("Attack");
+            eCreate.setAttribute("X", String.valueOf(xS));
+            eCreate.setAttribute("Y", String.valueOf(yS));
+            XMLOutputter xMLOutputter = new XMLOutputter(Format.getCompactFormat());
+            String xmlStringStudentElement = xMLOutputter.outputString(eCreate);
+            xmlStringStudentElement = xmlStringStudentElement.replace("\n", "");
+            send.println(xmlStringStudentElement);
+
         }));
 
     }
@@ -305,7 +305,6 @@ public class GameWindow extends Thread implements GUI {
                     case "ATTACK":
                         int ejeX = Integer.parseInt(root.getAttributeValue("X"));
                         int ejeY = Integer.parseInt(root.getAttributeValue("Y"));
-                        System.out.println("atacando...\n en x=" + ejeX + " y=" + ejeY);
                         this.draw(gc, ejeX, ejeY, new Image("file:/C:/Users/gmg/Desktop/Sprites/clean.png"));
                         break;
                 }
@@ -323,7 +322,13 @@ public class GameWindow extends Thread implements GUI {
     }
 
     private void draw(GraphicsContext gc, int x, int y, Image a) {
-        gc.clearRect(x, y, 200, 200);
+        gc.clearRect(x, y, this.pixelX, this.pixelY);
         gc.drawImage(a, x, y);
     }
+    EventHandler<WindowEvent> exit = new EventHandler<WindowEvent>() {
+        @Override
+        public void handle(WindowEvent event) {
+            System.exit(0);
+        }
+    };
 }
