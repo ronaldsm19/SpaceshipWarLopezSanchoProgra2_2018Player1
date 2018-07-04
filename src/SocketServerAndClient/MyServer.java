@@ -13,6 +13,8 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 public class MyServer extends Thread {
 
@@ -55,6 +57,15 @@ public class MyServer extends Thread {
                     case "EMPTY":
                         sendP2.println(info1);
                         break;
+                    case "WIN":
+                        sendP2.println(info1);
+                        Element e = new Element("Lose");
+                        XMLOutputter xm = new XMLOutputter(Format.getCompactFormat());
+                        String m = xm.outputString(e);
+                        m = m.replace("\n", "");
+                        System.out.println("WIN SERVER");
+                        sendP1.println(m);
+                        break;
                 }
 
                 String info2 = null;
@@ -75,6 +86,14 @@ public class MyServer extends Thread {
                         break;
                     case "EMPTY":
                         sendP1.println(info2);
+                        break;
+                    case "WIN":
+                        sendP1.println(info2);
+                        Element e = new Element("Lose");
+                        XMLOutputter xm = new XMLOutputter(Format.getCompactFormat());
+                        String m = xm.outputString(e);
+                        m = m.replace("\n", "");
+                        sendP2.println(m);
                         break;
                 }
             }

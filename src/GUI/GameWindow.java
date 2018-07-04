@@ -12,6 +12,7 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -20,8 +21,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.WindowEvent;
@@ -105,7 +110,7 @@ public class GameWindow extends Thread implements GUI {
         this.lblName.setFont(new Font("Arial", 15));
         this.lblGridSize.setFont(new Font("Arial", 15));
         try {
-            address = InetAddress.getByName("192.168.43.93");
+            address = InetAddress.getByName("192.168.0.30");
             //address = InetAddress.getLocalHost();
         } catch (UnknownHostException ex) {
             Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
@@ -157,6 +162,12 @@ public class GameWindow extends Thread implements GUI {
         lblNamePlayer.relocate(500, 0);
     }
 
+    public void handle(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            System.out.println("Mensaje mio jajajajajajaja");
+        }
+    }
+
     @Override
     public void addEventActions() {
         btnCheck.setOnAction((event) -> {
@@ -173,6 +184,7 @@ public class GameWindow extends Thread implements GUI {
             this.tfxMessage.setText("");
 
         });
+
         btnName.setOnAction((event -> {
             String name = this.tfxName.getText();
             String n = this.combobox.getValue();
@@ -233,15 +245,15 @@ public class GameWindow extends Thread implements GUI {
                     int y = (int) Math.floor(eventG.getY() / this.pixelY);
                     System.out.println("x: " + x + "  y: " + y);
                     if (this.countM == 0) {
-                        this.draw(gc, ejeX, ejeY, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/madre.png"));
+                        this.draw(gc, (x * this.pixelX) + 40, (y * this.pixelY) + 30, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/madre.png"));
                         this.xM = x;
                         this.yM = y;
-                        this.placeOfShips[y][x] = 2;
+                        this.placeOfShips[x][y] = 2;
                         ++countM;
                         this.lblStatus.setText("preparing");
                     } else if (countD < this.gridSize - 1) {
-                        this.draw(gc, ejeX, ejeY, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/hija.png"));
-                        this.placeOfShips[y][x] = 1;
+                        this.draw(gc, (x * this.pixelX) + 60, (y * this.pixelY) + 40, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/hija.png"));
+                        this.placeOfShips[x][y] = 1;
                         ++countD;
                         if (countD == this.gridSize) {
                             this.lblStatus.setText("playing");
@@ -249,9 +261,34 @@ public class GameWindow extends Thread implements GUI {
                     }
                 });
                 this.gridPaneToAttack.setOnMouseClicked((eventM) -> {
+                    int ejeX = (int) Math.floor(eventM.getX() / 40);
+                    int ejeY = (int) Math.floor(eventM.getY() / 40);
                     if (eventM.getButton() == MouseButton.PRIMARY) {
-                        int ejeX = (int) Math.floor(eventM.getX() / 40);
-                        int ejeY = (int) Math.floor(eventM.getY() / 40);
+
+                        Image image = new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/blue.jpeg");
+                        ImageView imageS = new ImageView(image);
+                        HBox hBox_outter = new HBox();
+                        String style_outter = "-fx-border-color: black;"
+                                + "-fx-border-width: 0.5;";
+                        hBox_outter.setStyle(style_outter);
+                        //se agrega el visor de imagenes al HBox
+                        hBox_outter.getChildren().add(imageS);
+                        //agregar el hbox con el cuadro de imagen
+                        gridPaneToAttack.add(hBox_outter, ejeX, ejeY);
+                        this.lblXtoAttack.setText(String.valueOf(ejeX));
+                        this.lblYtoAttack.setText(String.valueOf(ejeY));
+                    }
+                    if (eventM.getButton() == MouseButton.SECONDARY) {
+                        Image image = new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/black.jpeg");
+                        ImageView imageS = new ImageView(image);
+                        HBox hBox_outter = new HBox();
+                        String style_outter = "-fx-border-color: black;"
+                                + "-fx-border-width: 0.5;";
+                        hBox_outter.setStyle(style_outter);
+                        //se agrega el visor de imagenes al HBox
+                        hBox_outter.getChildren().add(imageS);
+                        //agregar el hbox con el cuadro de imagen
+                        gridPaneToAttack.add(hBox_outter, ejeX, ejeY);
                         this.lblXtoAttack.setText(String.valueOf(ejeX));
                         this.lblYtoAttack.setText(String.valueOf(ejeY));
                     }
@@ -274,6 +311,16 @@ public class GameWindow extends Thread implements GUI {
             send.println(xmlStringStudentElement);
             ////////////////
             this.btnAttack.setDisable(true);
+            Image image = new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/black.jpeg");
+            ImageView imageS = new ImageView(image);
+            HBox hBox = new HBox();
+            String style_outter = "-fx-border-color: black;"
+                    + "-fx-border-width: 0.5;";
+            hBox.setStyle(style_outter);
+            //se agrega el visor de imagenes al HBox
+            hBox.getChildren().add(imageS);
+            //agregar el hbox con el cuadro de imagen
+            gridPaneToAttack.add(hBox, Integer.parseInt(this.lblXtoAttack.getText()), Integer.parseInt(this.lblYtoAttack.getText()));
 
         }));
 
@@ -306,18 +353,22 @@ public class GameWindow extends Thread implements GUI {
                         break;
                     case "CHECK":
                         break;
+                    case "WIN":
+                        System.out.println("GANEEEE");
+                        this.taChat.setText(this.taChat.getText() + "You won!! :)" + "\n");
+                        this.draw(gc, 10, 10, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/win.png"));
+
+                        break;
+                    case "LOSE":
+                        System.out.println("perdí");
+                        this.taChat.setText(this.taChat.getText() + "You lose!! :)" + "\n");
+                        this.draw(gc, 10, 10, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/lose.png"));
+                        break;
                     case "ATTACK":
                         int ejeXMatriz;
                         int ejeYMatriz;
                         int ejeX = Integer.parseInt(root.getAttributeValue("X"));
                         int ejeY = Integer.parseInt(root.getAttributeValue("Y"));
-//                        System.out.println("Eje X:" + ejeX);
-//                        System.out.println("Eje Y:" + ejeY);
-//                        System.out.println("Pixeles en x:" + this.pixelX);
-//                        System.out.println("Pixeles en y:" + this.pixelY);
-//                        System.out.println("Eje X:" + ejeXMatriz);
-//                        System.out.println("Eje Y:" + ejeYMatriz);
-                        
                         ejeXMatriz = ejeX / pixelX;
                         ejeYMatriz = ejeY / pixelY;
                         System.out.println("Eje X:" + ejeXMatriz);
@@ -332,7 +383,11 @@ public class GameWindow extends Thread implements GUI {
                                     case 1:
                                         this.lifeCount--;
                                         this.draw(gc, ejeX + 40, ejeY + 30, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/explosionMadre22.png"));
-                                        JOptionPane.showMessageDialog(null, this.tfxName.getText()+"Usted ganó");
+                                        Element e = new Element("Win");
+                                        XMLOutputter xm = new XMLOutputter(Format.getCompactFormat());
+                                        String m = xm.outputString(e);
+                                        m = m.replace("\n", "");
+                                        send.println(m);
                                         break;
                                     default:
                                         System.out.println("destruida");
@@ -345,7 +400,7 @@ public class GameWindow extends Thread implements GUI {
                                 break;
                             default:
                                 System.out.println("No hay naves");
-                                this.draw(gc, ejeX , ejeY, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/exp1.png"));
+                                this.draw(gc, ejeX + 20, ejeY + 20, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/exp1.png"));
                                 break;
                         }
                         this.btnAttack.setDisable(false);
@@ -358,12 +413,6 @@ public class GameWindow extends Thread implements GUI {
         }
     }
 
-    public void edit() {
-        System.out.println("entro a editar");
-        this.lblName.setText("hilo");
-        System.out.println("editó");
-    }
-
     private void draw(GraphicsContext gc, int x, int y, Image a) {
         gc.clearRect(x, y, this.pixelX, this.pixelY);
         gc.drawImage(a, x, y);
@@ -374,4 +423,25 @@ public class GameWindow extends Thread implements GUI {
             System.exit(0);
         }
     };
+
+    public void visibleWindow() {
+        this.btnAttack.setDisable(true);
+
+    }
+
+    public void sendM(String name, String message) {
+
+        Element e = new Element(name);
+
+        e.setAttribute("Shoot", message);
+
+        XMLOutputter xMLO = new XMLOutputter(Format.getCompactFormat());
+
+        String xmlS = xMLO.outputString(e);
+
+        xmlS = xmlS.replace("\n", "");
+
+        send.println(xmlS);
+
+    }
 }
