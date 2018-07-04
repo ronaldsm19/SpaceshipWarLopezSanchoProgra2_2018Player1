@@ -63,7 +63,6 @@ public class MyServer extends Thread {
                         XMLOutputter xm = new XMLOutputter(Format.getCompactFormat());
                         String m = xm.outputString(e);
                         m = m.replace("\n", "");
-                        System.out.println("WIN SERVER");
                         sendP1.println(m);
                         break;
                     case "INFORMRIGTH":
