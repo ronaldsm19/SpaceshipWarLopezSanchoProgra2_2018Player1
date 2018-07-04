@@ -13,10 +13,12 @@ public class MainServer {
         mainServer = new ServerSocket(12000);
         do {
             Socket player1 = mainServer.accept();
+            System.out.println("un jugador");
             Socket player2 = mainServer.accept();
             new MyServer(player1, player2).start();
+            System.out.println("dos jugadores");
         } while (true);
-        
+
     }
-    
+
 }
