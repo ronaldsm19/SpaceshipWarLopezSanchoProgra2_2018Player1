@@ -16,5 +16,7 @@ public class MainServer {
             Socket player2 = mainServer.accept();
             new MyServer(player1, player2).start();
         } while (true);
+        
     }
+    
 }

@@ -68,7 +68,7 @@ public class MyServer extends Thread {
                     case "CREATE":
                         break;
                     case "ATTACK":
-                        sendP1.println(info1);
+                        sendP1.println(info2);
                         break;
                     case "MESSAGE":
                         sendP1.println(info2);
