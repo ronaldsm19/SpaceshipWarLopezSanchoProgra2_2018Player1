@@ -355,14 +355,21 @@ public class GameWindow extends Thread implements GUI {
                         break;
                     case "WIN":
                         System.out.println("GANEEEE");
-                        this.taChat.setText(this.taChat.getText() + "You won!! :)" + "\n");
-                        this.draw(gc, 10, 10, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/win.png"));
-
+                        this.taChat.setText(this.taChat.getText() + ">>>>You won<<<<" + "\n");
+                        this.draw(gc, 40, 10, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/win.png"));
+                        this.btnAttack.setDisable(true);
                         break;
                     case "LOSE":
                         System.out.println("perdí");
-                        this.taChat.setText(this.taChat.getText() + "You lose!! :)" + "\n");
+                        this.taChat.setText(this.taChat.getText() + ">>>>You lose<<<<" + "\n");
                         this.draw(gc, 10, 10, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/lose.png"));
+                        this.btnAttack.setDisable(true);
+                        break;
+                    case "INFORMRIGTH":
+                        this.taChat.setText(this.taChat.getText() + "Your shot was rigth" + "\n");
+                        break;
+                    case "INFORMWRONG":
+                        this.taChat.setText(this.taChat.getText() + "Your shot was wrong" + "\n");
                         break;
                     case "ATTACK":
                         int ejeXMatriz;
@@ -373,8 +380,12 @@ public class GameWindow extends Thread implements GUI {
                         ejeYMatriz = ejeY / pixelY;
                         System.out.println("Eje X:" + ejeXMatriz);
                         System.out.println("Eje Y:" + ejeYMatriz);
+                        String inform = "";
+                        
                         switch (this.placeOfShips[ejeXMatriz][ejeYMatriz]) {
                             case 2:
+                                inform = "informRigth";
+                                sendM(inform);
                                 switch (this.lifeCount) {
                                     case 2:
                                         this.lifeCount--;
@@ -388,6 +399,7 @@ public class GameWindow extends Thread implements GUI {
                                         String m = xm.outputString(e);
                                         m = m.replace("\n", "");
                                         send.println(m);
+                                        
                                         break;
                                     default:
                                         System.out.println("destruida");
@@ -395,10 +407,14 @@ public class GameWindow extends Thread implements GUI {
                                 }
                                 break;
                             case 1:
+                                inform = "informRigth";
+                                sendM(inform);
                                 System.out.println("Soy la nave hija");
                                 this.draw(gc, ejeX + 60, ejeY + 40, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/explosionHija1.png"));
                                 break;
                             default:
+                                inform = "informWrong";
+                                sendM(inform);
                                 System.out.println("No hay naves");
                                 this.draw(gc, ejeX + 20, ejeY + 20, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/exp1.png"));
                                 break;
@@ -424,23 +440,12 @@ public class GameWindow extends Thread implements GUI {
         }
     };
 
-    public void visibleWindow() {
-        this.btnAttack.setDisable(true);
-
-    }
-
-    public void sendM(String name, String message) {
+    public void sendM(String name) {
 
         Element e = new Element(name);
-
-        e.setAttribute("Shoot", message);
-
         XMLOutputter xMLO = new XMLOutputter(Format.getCompactFormat());
-
         String xmlS = xMLO.outputString(e);
-
         xmlS = xmlS.replace("\n", "");
-
         send.println(xmlS);
 
     }
