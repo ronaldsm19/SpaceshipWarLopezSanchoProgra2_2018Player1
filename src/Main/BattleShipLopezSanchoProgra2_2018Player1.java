@@ -5,8 +5,10 @@ package Main;
 import GUI.GameWindow;
 import java.io.IOException;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class BattleShipLopezSanchoProgra2_2018Player1 extends Application {
 
@@ -21,6 +23,13 @@ public class BattleShipLopezSanchoProgra2_2018Player1 extends Application {
         primaryStage.setTitle("JUEGO");
         primaryStage.setScene(scene);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(exit);
     }
+    EventHandler<WindowEvent> exit = new EventHandler<WindowEvent>() {
+        @Override
+        public void handle(WindowEvent event) {
+            System.exit(0);
+        }
+    };
 
 }

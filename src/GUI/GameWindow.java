@@ -25,6 +25,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.WindowEvent;
+import javax.swing.JOptionPane;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -105,6 +106,7 @@ public class GameWindow extends Thread implements GUI {
         this.lblGridSize.setFont(new Font("Arial", 15));
         try {
             address = InetAddress.getByName("192.168.43.93");
+            //address = InetAddress.getLocalHost();
         } catch (UnknownHostException ex) {
             Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -190,7 +192,7 @@ public class GameWindow extends Thread implements GUI {
                 this.tfxMessage.setVisible(true);
                 this.btnCheck.setVisible(true);
                 this.btnAttack.setVisible(true);
-                Image img = new Image("file:/C:/Users/gmg/Desktop/Sprites/background.jpg");
+                Image img = new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/background.jpg");
                 this.gridPane = gm.splitImage(img, Integer.parseInt(n));//, Integer.parseInt(this.tfxSize.getText()));
                 this.gridPaneToAttack = gm.zoneToAttack(img, Integer.parseInt(n));
                 lblXtoAttack.setVisible(true);
@@ -231,14 +233,14 @@ public class GameWindow extends Thread implements GUI {
                     int y = (int) Math.floor(eventG.getY() / this.pixelY);
                     System.out.println("x: " + x + "  y: " + y);
                     if (this.countM == 0) {
-                        this.draw(gc, ejeX, ejeY, new Image("file:/C:/Users/gmg/Desktop/Sprites/madre.png"));
+                        this.draw(gc, ejeX, ejeY, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/madre.png"));
                         this.xM = x;
                         this.yM = y;
                         this.placeOfShips[y][x] = 2;
                         ++countM;
                         this.lblStatus.setText("preparing");
-                    } else if (countD < this.gridSize) {
-                        this.draw(gc, ejeX, ejeY, new Image("file:/C:/Users/gmg/Desktop/Sprites/hija.png"));
+                    } else if (countD < this.gridSize - 1) {
+                        this.draw(gc, ejeX, ejeY, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/hija.png"));
                         this.placeOfShips[y][x] = 1;
                         ++countD;
                         if (countD == this.gridSize) {
@@ -270,6 +272,8 @@ public class GameWindow extends Thread implements GUI {
             String xmlStringStudentElement = xMLOutputter.outputString(eCreate);
             xmlStringStudentElement = xmlStringStudentElement.replace("\n", "");
             send.println(xmlStringStudentElement);
+            ////////////////
+            this.btnAttack.setDisable(true);
 
         }));
 
@@ -303,9 +307,48 @@ public class GameWindow extends Thread implements GUI {
                     case "CHECK":
                         break;
                     case "ATTACK":
+                        int ejeXMatriz;
+                        int ejeYMatriz;
                         int ejeX = Integer.parseInt(root.getAttributeValue("X"));
                         int ejeY = Integer.parseInt(root.getAttributeValue("Y"));
-                        this.draw(gc, ejeX, ejeY, new Image("file:/C:/Users/gmg/Desktop/Sprites/clean.png"));
+//                        System.out.println("Eje X:" + ejeX);
+//                        System.out.println("Eje Y:" + ejeY);
+//                        System.out.println("Pixeles en x:" + this.pixelX);
+//                        System.out.println("Pixeles en y:" + this.pixelY);
+//                        System.out.println("Eje X:" + ejeXMatriz);
+//                        System.out.println("Eje Y:" + ejeYMatriz);
+                        
+                        ejeXMatriz = ejeX / pixelX;
+                        ejeYMatriz = ejeY / pixelY;
+                        System.out.println("Eje X:" + ejeXMatriz);
+                        System.out.println("Eje Y:" + ejeYMatriz);
+                        switch (this.placeOfShips[ejeXMatriz][ejeYMatriz]) {
+                            case 2:
+                                switch (this.lifeCount) {
+                                    case 2:
+                                        this.lifeCount--;
+                                        this.draw(gc, ejeX + 40, ejeY + 30, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/explosionMadre11.png"));
+                                        break;
+                                    case 1:
+                                        this.lifeCount--;
+                                        this.draw(gc, ejeX + 40, ejeY + 30, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/explosionMadre22.png"));
+                                        JOptionPane.showMessageDialog(null, this.tfxName.getText()+"Usted ganó");
+                                        break;
+                                    default:
+                                        System.out.println("destruida");
+                                        break;
+                                }
+                                break;
+                            case 1:
+                                System.out.println("Soy la nave hija");
+                                this.draw(gc, ejeX + 60, ejeY + 40, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/explosionHija1.png"));
+                                break;
+                            default:
+                                System.out.println("No hay naves");
+                                this.draw(gc, ejeX , ejeY, new Image("file:/C:/Users/Ronald%20Emilio/Desktop/Sprites/exp1.png"));
+                                break;
+                        }
+                        this.btnAttack.setDisable(false);
                         break;
                 }
             }
