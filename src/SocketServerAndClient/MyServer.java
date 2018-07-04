@@ -66,6 +66,12 @@ public class MyServer extends Thread {
                         System.out.println("WIN SERVER");
                         sendP1.println(m);
                         break;
+                    case "INFORMRIGTH":
+                        sendP2.println(info1);
+                        break;
+                    case "INFORMWRONG":
+                        sendP2.println(info1);
+                        break;
                 }
 
                 String info2 = null;
@@ -94,6 +100,12 @@ public class MyServer extends Thread {
                         String m = xm.outputString(e);
                         m = m.replace("\n", "");
                         sendP2.println(m);
+                        break;
+                    case "INFORMRIGTH":
+                        sendP1.println(info2);
+                        break;
+                    case "INFORMWRONG":
+                        sendP1.println(info2);
                         break;
                 }
             }
