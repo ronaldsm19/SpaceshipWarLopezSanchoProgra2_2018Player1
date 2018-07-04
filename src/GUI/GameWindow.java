@@ -105,8 +105,8 @@ public class GameWindow extends Thread implements GUI {
         this.lblName.setFont(new Font("Arial", 15));
         this.lblGridSize.setFont(new Font("Arial", 15));
         try {
-            //address = InetAddress.getByName("192.168.43.93");
-            address = InetAddress.getLocalHost();
+            address = InetAddress.getByName("192.168.43.93");
+            //address = InetAddress.getLocalHost();
         } catch (UnknownHostException ex) {
             Logger.getLogger(GameWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
